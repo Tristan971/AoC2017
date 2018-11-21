@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.IntStream;
 
 import javax.annotation.PostConstruct;
 
@@ -31,14 +32,20 @@ public class AoC2017 {
     public void runAllChallenges() {
         aocChallenges.forEach(challenge -> {
             LOGGER.info(
-                    "Running challenge {}/25 : {}",
+                    "[{}/25] {}",
                     challenge.challengeNumber(),
                     challenge.getClass().getSimpleName()
             );
             try {
                 final InputStream inputFileStream = getClass().getClassLoader().getResourceAsStream(challenge.inputFileLocation());
                 final String input = new String(Objects.requireNonNull(inputFileStream, "Cannot read input data.").readAllBytes());
-                LOGGER.info("Result : {}", challenge.runPuzzle(input));
+                final List<?> results = challenge.puzzles(input);
+                IntStream.range(0, results.size()).forEach(stepNumber -> LOGGER.info(
+                        "\t- Part {}/{} : {}",
+                        stepNumber + 1,
+                        results.size(),
+                        results.get(stepNumber)
+                ));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

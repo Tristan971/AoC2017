@@ -1,11 +1,13 @@
 package moe.tristan.aoc2017;
 
+import java.util.List;
+
 public interface AocChallenge<T> {
 
     String inputFileLocation();
 
     int challengeNumber();
 
-    T runPuzzle(final String input);
+    List<T> puzzles(final String input);
 
 }

@@ -1,5 +1,9 @@
 package moe.tristan.aoc2017.day1;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Function;
+
 import org.springframework.stereotype.Component;
 
 import moe.tristan.aoc2017.AocChallenge;
@@ -18,22 +22,39 @@ public class InverseCaptcha implements AocChallenge<Integer> {
     }
 
     @Override
-    public Integer runPuzzle(final String input) {
+    public List<Integer> puzzles(final String input) {
+        return Arrays.asList(
+                step1(input),
+                step2(input)
+        );
+    }
+
+    Integer step1(final String input) {
+        return stepN(input, 1);
+    }
+
+    Integer step2(final String input) {
+        return stepN(input, input.length() / 2);
+    }
+
+    private Integer stepN(final String input, final int n) {
         int sum = 0;
 
         final char[] chars = input.toCharArray();
 
         for (int i = 0; i < chars.length; i++) {
-            int prevIndex = i == 0 ? chars.length - 1 : i - 1;
-
-            int prevVal = ((int) chars[prevIndex]) - (int) '0';
-            int val = ((int) chars[i]) - (int) '0';
-            if (val == prevVal) {
+            int val = charToInt(chars[i]);
+            int nextVal = charToInt(chars[(i + n) % chars.length]);
+            if (nextVal == val) {
                 sum += val;
             }
         }
 
         return sum;
+    }
+
+    private int charToInt(char c) {
+        return (int) c - (int) '0';
     }
 
 }
