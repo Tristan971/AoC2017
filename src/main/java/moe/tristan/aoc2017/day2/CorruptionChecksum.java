@@ -5,8 +5,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.OptionalInt;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.springframework.stereotype.Component;
 
@@ -27,25 +27,18 @@ public class CorruptionChecksum implements AocChallenge<Integer> {
 
     @Override
     public List<Integer> puzzles(String input) {
-        final String[] lines = input.split("\n");
+        final Set<Set<Integer>> lines = readInput(input);
         return Arrays.asList(
-                step1(lines)
+                step(lines, CorruptionChecksum::maxMinusMin),
+                step(lines, CorruptionChecksum::maxDivMinEvenlyDivisible)
         );
     }
 
-    int step1(final String[] lines) {
-        int sum = 0;
-        for (String line : lines) {
-            sum += checksumLine(line);
-        }
-        return sum;
+    int step(final Set<Set<Integer>> lines, final Function<Set<Integer>, Integer> lineChecksum) {
+        return lines.stream().map(lineChecksum).reduce(0, Math::addExact);
     }
 
-    int checksumLine(final String lineValues) {
-        final Set<Integer> numbers = Stream.of(lineValues.split("\t| +"))
-                                           .map(String::trim)
-                                           .map(Integer::parseInt)
-                                           .collect(Collectors.toSet());
+    static int maxMinusMin(final Set<Integer> numbers) {
         OptionalInt smallest = smallest(numbers);
         OptionalInt largest = largest(numbers);
         if (smallest.isPresent() && largest.isPresent()) {
@@ -54,11 +47,37 @@ public class CorruptionChecksum implements AocChallenge<Integer> {
         return 0;
     }
 
-    private OptionalInt smallest(Collection<Integer> values) {
+    static int maxDivMinEvenlyDivisible(final Set<Integer> numbers) {
+        for (Integer x : numbers) {
+            for (Integer y : numbers) {
+                if (y.equals(x)) {
+                    continue;
+                }
+                int min = Math.min(x, y);
+                int max = Math.max(x, y);
+                if (max % min == 0) {
+                    return max / min;
+                }
+            }
+        }
+        return 0;
+    }
+
+    static Set<Set<Integer>> readInput(final String input) {
+        return Arrays.stream(input.split("\n|[\r\n]"))
+                     .map(line -> line.split("\t| +"))
+                     .map(lineVals -> Arrays.stream(lineVals)
+                                            .filter(val -> !val.isBlank())
+                                            .map(Integer::parseInt)
+                                            .collect(Collectors.toSet()))
+                     .collect(Collectors.toSet());
+    }
+
+    private static OptionalInt smallest(Collection<Integer> values) {
         return values.stream().mapToInt(Integer::intValue).min();
     }
 
-    private OptionalInt largest(Collection<Integer> values) {
+    private static OptionalInt largest(Collection<Integer> values) {
         return values.stream().mapToInt(Integer::intValue).max();
     }
 
