@@ -2,13 +2,9 @@ package moe.tristan.aoc2017.day1;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Function;
-
-import org.springframework.stereotype.Component;
 
 import moe.tristan.aoc2017.AocChallenge;
 
-@Component
 public class InverseCaptcha implements AocChallenge<Integer> {
 
     @Override

@@ -8,11 +8,8 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import org.springframework.stereotype.Component;
-
 import moe.tristan.aoc2017.AocChallenge;
 
-@Component
 public class CorruptionChecksum implements AocChallenge<Integer> {
 
     @Override

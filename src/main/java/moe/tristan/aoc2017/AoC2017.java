@@ -1,5 +1,7 @@
 package moe.tristan.aoc2017;
 
+import static org.springframework.context.annotation.FilterType.ASSIGNABLE_TYPE;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -12,8 +14,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.ComponentScan.Filter;
+import org.springframework.context.annotation.FilterType;
 
 @SpringBootApplication
+@ComponentScan(includeFilters = @Filter(type = ASSIGNABLE_TYPE, classes = AocChallenge.class))
 public class AoC2017 {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AoC2017.class);
@@ -25,10 +31,9 @@ public class AoC2017 {
     }
 
     public static void main(String[] args) {
-        SpringApplication.run(AoC2017.class, args).getBean(AoC2017.class);
+        SpringApplication.run(AoC2017.class, args).getBean(AoC2017.class).runAllChallenges();
     }
 
-    @PostConstruct
     public void runAllChallenges() {
         aocChallenges.forEach(challenge -> {
             LOGGER.info(
